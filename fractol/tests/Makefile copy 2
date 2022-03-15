@@ -1,0 +1,61 @@
+NAME = fractol
+
+CC = gcc
+FLAGS = -Wall -Werror -Wextra 
+LIBRARIES = -lmlx -lm -lft -L$(MINILIBX_DIRECTORY) -framework OpenGL -framework AppKit
+INCLUDES = -I$(HEADERS_DIRECTORY) -I$(MINILIBX_HEADERS)
+
+MINILIBX = $(MINILIBX_DIRECTORY)libmlx.a
+MINILIBX_DIRECTORY = ./minilibx_macos/
+MINILIBX_HEADERS = $(MINILIBX_DIRECTORY
+
+HEADERS_LIST = fractol.h
+HEADERS_DIRECTORY = ./includes/
+HEADERS = $(addprefix $(HEADERS_DIRECTORY), $(HEADERS_LIST))
+
+SOURCES_DIRECTORY = ./sources/
+SOURCES_LIST = 	fractol.c	init.c	mandelbrot.c	draw.c	hooks.c	julia.c	fractals_transformations.c	shift_color.c	ft_math.c	colors.c	swap_color.c	utils.c	burning_ship.c	celtic_mandelbar.c	\
+		celtic_mandelbrot.c	celtic_perpendicular.c	perpendicular_buffalo.c	perpendicular_burning_ship.c	perpendicular_mandelbrot.c	choice_fractals.c	ft_itoa.c	draw_informations.c	
+SOURCES = $(addprefix $(SOURCES_DIRECTORY), $(SOURCES_LIST))
+
+
+OBJECTS_DIRECTORY = objects/
+OBJECTS_LIST = $(patsubst %.c, %.o, $(SOURCES_LIST))
+OBJECTS	= $(addprefix $(OBJECTS_DIRECTORY), $(OBJECTS_LIST))
+
+all: $(NAME)
+
+$(NAME): $(MINILIBX) $(OBJECTS_DIRECTORY) $(OBJECTS)
+	@$(CC) $(FLAGS) $(LIBRARIES) $(INCLUDES) $(OBJECTS) -o $(NAME)
+	@echo "\n$(NAME): object files were created"
+	@echo "$(NAME): $(NAME) was created"
+
+$(OBJECTS_DIRECTORY):
+	@mkdir -p $(OBJECTS_DIRECTORY)
+	@echo "$(NAME): $(OBJECTS_DIRECTORY) was created"
+
+$(OBJECTS_DIRECTORY)%.o : $(SOURCES_DIRECTORY)%.c $(HEADERS)
+	@$(CC) $(FLAGS) -c $(INCLUDES) $< -o $@
+	@echo ".$(RESET)\c"
+
+$(MINILIBX):
+	@echo "$(NAME): Creating $(MINILIBX)..."
+	@$(MAKE) -sC $(MINILIBX_DIRECTORY)
+
+clean:
+	@$(MAKE) -sC $(MINILIBX_DIRECTORY) clean
+	@rm -rf $(OBJECTS_DIRECTORY)
+	@echo "$(NAME): $(OBJECTS_DIRECTORY) was deleted"
+	@echo "$(NAME): object files were deleted"
+
+fclean: clean
+	@rm -f $(MINILIBX)
+	@echo "$(NAME): $(MINILIBX) was deleted"
+	@rm -f $(NAME)
+	@echo "$(NAME): $(NAME) was deleted"
+
+re:
+	@$(MAKE) fclean
+	@$(MAKE) all
+
+.PHONY : all clean fclean re

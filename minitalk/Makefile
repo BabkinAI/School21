@@ -1,0 +1,95 @@
+NAME = Minitalk
+
+NAME_CLIENT = client
+
+NAME_SERVER = server
+
+NAME_CLIENT_BONUS = client_bonus
+
+NAME_SERVER_BONUS = server_bonus
+
+CC = gcc
+FLAGS = -Wall -Werror -Wextra -O3
+INCLUDES = -I$(HEADERS_DIRECTORY)
+
+HEADERS_LIST = minitalk.h
+HEADERS_DIRECTORY = ./includes/
+HEADERS = $(addprefix $(HEADERS_DIRECTORY), $(HEADERS_LIST))
+
+SOURCES_DIRECTORY = ./sources/
+SOURCES_DIRECTORY_BONUS = ./bonus/
+SOURCES_LIST_CLIENT = client.c utils.c
+SOURCES_LIST_SERVER = server.c utils.c
+
+OBJECTS_DIRECTORY = objects/
+OBJECTS_DIRECTORY_BONUS = objects_bonus/
+OBJECTS_LIST_CLIENT = $(patsubst %.c, %.o, $(SOURCES_LIST_CLIENT))
+OBJECTS_LIST_SERVER = $(patsubst %.c, %.o, $(SOURCES_LIST_SERVER))
+OBJECTS_CLIENT	= $(addprefix $(OBJECTS_DIRECTORY), $(OBJECTS_LIST_CLIENT))
+OBJECTS_SERVER	= $(addprefix $(OBJECTS_DIRECTORY), $(OBJECTS_LIST_SERVER))
+OBJECTS_CLIENT_BONUS = $(addprefix $(OBJECTS_DIRECTORY_BONUS), $(OBJECTS_LIST_CLIENT))
+OBJECTS_SERVER_BONUS = $(addprefix $(OBJECTS_DIRECTORY_BONUS), $(OBJECTS_LIST_SERVER))
+
+# COLORS
+
+GREEN = \033[0;32m
+RED = \033[0;31m
+RESET = \033[0m
+
+.PHONY: all clean fclean re bonus
+
+all: $(NAME_CLIENT) $(NAME_SERVER)
+
+$(NAME_CLIENT): $(OBJECTS_DIRECTORY) $(OBJECTS_CLIENT)
+	@$(CC) $(FLAGS) $(INCLUDES) $(OBJECTS_CLIENT) -o $(NAME_CLIENT)
+	@echo "\n$(NAME_CLIENT): $(GREEN)object files were created$(RESET)"
+	@echo "$(NAME_CLIENT): $(GREEN)$(NAME_CLIENT) was created$(RESET)"
+
+$(NAME_SERVER): $(OBJECTS_DIRECTORY) $(OBJECTS_SERVER)
+	@$(CC) $(FLAGS) $(INCLUDES) $(OBJECTS_SERVER) -o $(NAME_SERVER)
+	@echo "\n$(NAME_SERVER): $(GREEN)object files were created$(RESET)"
+	@echo "$(NAME_SERVER): $(GREEN)$(NAME_SERVER) was created$(RESET)"
+
+$(OBJECTS_DIRECTORY):
+	@mkdir -p $(OBJECTS_DIRECTORY)
+	@echo "$(NAME): $(GREEN)$(OBJECTS_DIRECTORY) was created$(RESET)"
+
+$(OBJECTS_DIRECTORY)%.o : $(SOURCES_DIRECTORY)%.c $(HEADERS)
+	@$(CC) $(FLAGS) -c $(INCLUDES) $< -o $@
+	@echo "$(GREEN).$(RESET)\c"
+
+clean:
+	@rm -rf $(OBJECTS_DIRECTORY)
+	@rm -rf $(OBJECTS_DIRECTORY_BONUS)
+	@echo "$(NAME): $(RED)$(OBJECTS_DIRECTORY) was deleted$(RESET)"
+	@echo "$(NAME): $(RED)object files were deleted$(RESET)"
+
+fclean: clean
+	@rm -f $(NAME_CLIENT) $(NAME_SERVER)
+	@rm -f $(NAME_CLIENT_BONUS) $(NAME_SERVER_BONUS)
+	@echo "$(NAME): $(RED)$(NAME_CLIENT) and $(NAME_SERVER) was deleted$(RESET)"
+
+re:
+	@$(MAKE) fclean
+	@$(MAKE) all
+
+bonus: $(NAME_CLIENT_BONUS) $(NAME_SERVER_BONUS)
+
+$(NAME_CLIENT_BONUS): $(OBJECTS_DIRECTORY_BONUS) $(OBJECTS_CLIENT_BONUS)
+	@$(CC) $(FLAGS) $(INCLUDES) $(OBJECTS_CLIENT_BONUS) -o $(NAME_CLIENT_BONUS)
+	@echo "\n$(NAME_CLIENT_BONUS): $(GREEN)object files were created$(RESET)"
+	@echo "$(NAME_CLIENT_BONUS): $(GREEN)$(NAME_CLIENT_BONUS) was created$(RESET)"
+
+$(NAME_SERVER_BONUS): $(OBJECTS_DIRECTORY_BONUS) $(OBJECTS_SERVER_BONUS)
+	@$(CC) $(FLAGS) $(INCLUDES) $(OBJECTS_SERVER_BONUS) -o $(NAME_SERVER_BONUS)
+	@echo "\n$(NAME_SERVER_BONUS): $(GREEN)object files were created$(RESET)"
+	@echo "$(NAME_SERVER_BONUS): $(GREEN)$(NAME_SERVER_BONUS) was created$(RESET)"
+
+$(OBJECTS_DIRECTORY_BONUS):
+	@mkdir -p $(OBJECTS_DIRECTORY_BONUS)
+	@echo "$(NAME): $(GREEN)$(OBJECTS_DIRECTORY_BONUS) was created$(RESET)"
+
+$(OBJECTS_DIRECTORY_BONUS)%.o : $(SOURCES_DIRECTORY_BONUS)%.c $(HEADERS)
+	@$(CC) $(FLAGS) -c $(INCLUDES) $< -o $@
+	@echo "$(GREEN).$(RESET)\c"
+
